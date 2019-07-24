@@ -1,0 +1,4 @@
+SRS
+
+v2.0.263.1 @20190724 
+	解决同一路拉流与推流临界点，SrsSource::fetch_or_create 同一个url会出现创建2个Source 问题

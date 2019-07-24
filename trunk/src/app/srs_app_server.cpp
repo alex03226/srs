@@ -634,8 +634,12 @@ int SrsServer::initialize_st()
         return ret;
     }
     
+#ifndef BUG_SrsSource_fetch_or_create_20190724
     // set current log id.
     _srs_context->generate_id();
+#else
+    _srs_context->attach_id(st_thread_self());
+#endif
     
     // check asprocess.
     bool asprocess = _srs_config->get_asprocess();

@@ -105,10 +105,14 @@ namespace internal {
         // we set to loop to true for thread to run.
         loop = true;
         
+#ifndef BUG_SrsSource_fetch_or_create_20190724
         // wait for cid to ready, for parent thread to get the cid.
         while (_cid < 0) {
             st_usleep(10 * 1000);
         }
+#else
+        _cid = _srs_context->attach_id(tid);
+#endif
         
         // now, cycle thread can run.
         can_run = true;
@@ -126,6 +130,9 @@ namespace internal {
         
         dispose();
         
+#ifdef BUG_SrsSource_fetch_or_create_20190724
+        _srs_context->detach_id(tid);
+#endif
         _cid = -1;
         can_run = false;
         tid = NULL;        
@@ -181,21 +188,27 @@ namespace internal {
     {
         int ret = ERROR_SUCCESS;
         
+#ifndef BUG_SrsSource_fetch_or_create_20190724
         _srs_context->generate_id();
         srs_info("thread %s cycle start", _name);
         
         _cid = _srs_context->get_id();
-        
+#else
+        srs_info("thread %s cycle start", _name);
+#endif
+
         srs_assert(handler);
         handler->on_thread_start();
         
         // thread is running now.
         really_terminated = false;
         
+#ifndef BUG_SrsSource_fetch_or_create_20190724
         // wait for cid to ready, for parent thread to get the cid.
         while (!can_run && loop) {
             st_usleep(10 * 1000);
         }
+#endif
         
         while (loop) {
             if ((ret = handler->on_before_cycle()) != ERROR_SUCCESS) {

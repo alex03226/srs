@@ -50,8 +50,13 @@ private:
 public:
     SrsThreadContext();
     virtual ~SrsThreadContext();
-public:
+public:    
+#ifndef BUG_SrsSource_fetch_or_create_20190724
     virtual int generate_id();
+#else
+    virtual int attach_id(void *tid);
+    virtual void detach_id(void *tid);
+#endif
     virtual int get_id();
     virtual int set_id(int v);
 public:

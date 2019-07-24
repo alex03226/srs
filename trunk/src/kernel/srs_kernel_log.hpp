@@ -109,10 +109,15 @@ public:
     ISrsThreadContext();
     virtual ~ISrsThreadContext();
 public:
+#ifndef BUG_SrsSource_fetch_or_create_20190724
     /**
      * generate the id for current context.
      */
     virtual int generate_id();
+#else
+    virtual int attach_id(void *tid);
+    virtual void detach_id(void *tid);
+#endif    
     /**
      * get the generated id of current context.
      */

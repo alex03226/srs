@@ -66,10 +66,20 @@ ISrsThreadContext::~ISrsThreadContext()
 {
 }
 
+#ifndef BUG_SrsSource_fetch_or_create_20190724
 int ISrsThreadContext::generate_id()
 {
     return 0;
 }
+#else
+int ISrsThreadContext::attach_id(void *tid) {
+	return 0;
+}
+
+void ISrsThreadContext::detach_id(void *tid) {
+
+}
+#endif
 
 int ISrsThreadContext::get_id()
 {

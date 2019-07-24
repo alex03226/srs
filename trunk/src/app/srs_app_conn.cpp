@@ -81,8 +81,12 @@ int SrsConnection::cycle()
 {
     int ret = ERROR_SUCCESS;
     
+#ifndef BUG_SrsSource_fetch_or_create_20190724
     _srs_context->generate_id();
     id = _srs_context->get_id();
+#else
+    id = _srs_context->attach_id(st_thread_self());
+#endif
     
     ip = srs_get_peer_ip(st_netfd_fileno(stfd));
     

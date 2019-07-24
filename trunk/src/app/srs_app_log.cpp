@@ -43,6 +43,7 @@ SrsThreadContext::~SrsThreadContext()
 {
 }
 
+#ifndef BUG_SrsSource_fetch_or_create_20190724
 int SrsThreadContext::generate_id()
 {
     static int id = 100;
@@ -51,6 +52,32 @@ int SrsThreadContext::generate_id()
     cache[st_thread_self()] = gid;
     return gid;
 }
+#else
+//存在，直接返回之前的
+//不存在，创建一个
+int SrsThreadContext::attach_id(void *tid) {
+    static int id = 100;
+
+    st_thread_t stid = (st_thread_t)tid;
+//    if (cache.find(stid) != cache.end()) {
+//        //return cache[stid];	//如果线程释放了，tid有可能重复
+//    }
+
+    int cid = id++;
+    cache[stid] = cid;
+    
+    return cid;
+}
+
+void SrsThreadContext::detach_id(void *tid) {
+    st_thread_t stid = (st_thread_t)tid;
+    std::map<st_thread_t, int>::iterator it = cache.find(stid);
+
+    if (it != cache.end()) {
+        cache.erase(it);
+    }
+}
+#endif
 
 int SrsThreadContext::get_id()
 {
