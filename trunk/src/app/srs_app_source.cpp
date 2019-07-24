@@ -1907,6 +1907,7 @@ int SrsSource::on_video_imp(SrsSharedPtrMessage* msg)
     if (is_sequence_header) {
         srs_freep(cache_sh_video);
         cache_sh_video = msg->copy();
+        //srs_warn("shenjie seq header=%d", msg->size);
         
         // parse detail audio codec
         SrsAvcAacCodec codec;
@@ -1915,11 +1916,13 @@ int SrsSource::on_video_imp(SrsSharedPtrMessage* msg)
         // @see https://github.com/ossrs/srs/issues/474
         codec.avc_parse_sps = _srs_config->get_parse_sps(_req->vhost);
         
+#if 0	// 20190523 为了支持H265，不能进行解析校验
         SrsCodecSample sample;
         if ((ret = codec.video_avc_demux(msg->payload, msg->size, &sample)) != ERROR_SUCCESS) {
             srs_error("source codec demux video failed. ret=%d", ret);
             return ret;
         }
+#endif
         
         // when got video stream info.
         SrsStatistic* stat = SrsStatistic::instance();

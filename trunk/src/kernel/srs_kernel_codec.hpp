@@ -109,6 +109,7 @@ enum SrsCodecVideo
     SrsCodecVideoOn2VP6WithAlphaChannel = 5,
     SrsCodecVideoScreenVideoVersion2     = 6,
     SrsCodecVideoAVC                     = 7,
+    SrsCodecVideoHEVC                    = 13,        //20190523 支持H265
 };
 std::string srs_codec_video2str(SrsCodecVideo codec);
 
@@ -218,6 +219,7 @@ public:
     * check codec h264.
     */
     static bool video_is_h264(char* data, int size);
+    static bool video_is_h265(char* data, int size);	//20190523 支持H265新增函数
     /**
     * check codec aac.
     */

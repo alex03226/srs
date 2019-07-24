@@ -204,10 +204,17 @@ bool SrsFlvCodec::video_is_keyframe(char* data, int size)
 
 bool SrsFlvCodec::video_is_sequence_header(char* data, int size)
 {
+#if 0
     // sequence header only for h264
     if (!video_is_h264(data, size)) {
         return false;
     }
+#else
+	// 20190724 支持H265
+    if (!video_is_h264(data, size) && !video_is_h265(data, size)) {
+        return false;
+    }
+#endif
     
     // 2bytes required.
     if (size < 2) {
@@ -253,6 +260,20 @@ bool SrsFlvCodec::video_is_h264(char* data, int size)
     return codec_id == SrsCodecVideoAVC;
 }
 
+// 20190724 支持H265 新增函数
+bool SrsFlvCodec::video_is_h265(char* data, int size)
+{
+    // 1bytes required.
+    if (size < 1) {
+        return false;
+    }
+
+    char codec_id = data[0];
+    codec_id = codec_id & 0x0F;
+    
+    return codec_id == SrsCodecVideoHEVC;
+}
+
 bool SrsFlvCodec::audio_is_aac(char* data, int size)
 {
     // 1bytes required.
@@ -281,9 +302,15 @@ bool SrsFlvCodec::video_is_acceptable(char* data, int size)
         return false;
     }
     
+#if 0
     if (codec_id < 2 || codec_id > 7) {
         return false;
     }
+#else
+    if ((codec_id < 2 || codec_id > 7) && codec_id != SrsCodecVideoHEVC) {
+        return false;
+    }
+#endif
     
     return true;
 }
